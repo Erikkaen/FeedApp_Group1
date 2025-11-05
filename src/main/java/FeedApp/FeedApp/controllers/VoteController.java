@@ -2,6 +2,7 @@ package FeedApp.FeedApp.controllers;
 
 import java.util.Collection;
 
+import FeedApp.FeedApp.model.VoteOption;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -22,22 +23,22 @@ public class VoteController {
 
     @PostMapping("/{pollId}/{username}")
     public void addVote(@PathVariable String pollId, @PathVariable String username,
-                         @RequestBody Vote vote) {
+                         @RequestBody Vote vote, @RequestBody String voteOption) {
 
-        pollManager.addVote(pollId, vote, username);
+        pollManager.addVote(pollId, vote, username, voteOption);
     }
 
-    @PutMapping("/{pollId}/{username}")
-    public void updateVote(@PathVariable String pollId, @PathVariable String username,
-                           @RequestBody Vote vote) {
-
-        pollManager.updateVote(pollId, vote, username);
-    }
-
-    @GetMapping
-    public Collection<Vote> getAllVotes() {
-        return pollManager.getVotes().values();
-    }
+//    @PutMapping("/{pollId}/{username}")
+//    public void updateVote(@PathVariable String pollId, @PathVariable String username,
+//                           @RequestBody Vote vote) {
+//
+//        pollManager.updateVote(pollId, vote, username);
+//    }
+//
+//    @GetMapping
+//    public Collection<Vote> getAllVotes() {
+//        return pollManager.getVotes().values();
+//    }
 
     @GetMapping("/{pollId}/{username}")
     public Vote getVote(@PathVariable String pollId, @PathVariable String username) {

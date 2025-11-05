@@ -7,8 +7,8 @@ import jakarta.persistence.*;
 public class VoteOption {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
     @Column(nullable = false)
     private String caption;
@@ -25,7 +25,7 @@ public class VoteOption {
 
     public VoteOption() {}
 
-    public Long getId() { 
+    public String getId() {
         return this.id; 
     }
     

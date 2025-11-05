@@ -1,8 +1,13 @@
 package FeedApp.FeedApp.controllers;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
+import FeedApp.FeedApp.model.*;
+import FeedApp.FeedApp.repositories.PollsRepo;
+import FeedApp.FeedApp.repositories.VoteOptionRepo;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,31 +20,30 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import FeedApp.FeedApp.model.Poll;
-import FeedApp.FeedApp.model.PollManager;
-import FeedApp.FeedApp.model.Vote;
-import FeedApp.FeedApp.model.VoteOption;
-
 @CrossOrigin
 @RestController
 @RequestMapping("/polls")
 public class PollController {
-    private final PollManager pollManager;
+  private final PollManager pollManager;
+  private final PollsRepo pollsRepo;
+  private final VoteOptionRepo voteOptionRepo;
 
-    public PollController(PollManager pollManager) {
+  public PollController(PollManager pollManager, PollsRepo pollsRepo, VoteOptionRepo voteOptionRepo) {
         this.pollManager = pollManager;
-    }
+    this.pollsRepo = pollsRepo;
+    this.voteOptionRepo = voteOptionRepo;
+  }
 
     @GetMapping
-    public Collection<Poll> getAllPolls() {
-        Collection<Poll> polls = pollManager.getPolls().values();
+    public Iterable<Poll> getAllPolls() {
+      Iterable<Poll> polls = pollManager.getPolls();
 
         for (Poll poll : polls) {
             for (VoteOption voteOption : poll.getOptions()) {
                 voteOption.setVoteCount(0);
             }
 
-            for (Vote vote : pollManager.getVotes().values()) {
+            for (Vote vote : pollManager.getVotes(poll.getId())) {
                 for (VoteOption voteOption : poll.getOptions()) {
                     if (voteOption.getPresentationOrder() == vote.getVotesOn().getPresentationOrder()) {
                         voteOption.setVoteCount(voteOption.getVoteCount() + 1);
@@ -51,22 +55,36 @@ public class PollController {
     }
 
     @GetMapping("/{pollId}")
-    public Poll getPoll(@PathVariable String pollId) {
-        Poll poll = pollManager.getPoll(pollId);
+    public Optional<Poll> getPoll(@PathVariable String pollId) {
+      Optional<Poll> poll = pollManager.getPoll(pollId);
     if (poll == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Poll not found");
     return poll;
     }
 
     @PostMapping
-    public String createPoll(@RequestBody Poll poll) {
-        String pollId = UUID.randomUUID().toString();
-        pollManager.addPoll(pollId, poll);
-        return pollId;
+    public Poll createPoll(@RequestBody Poll poll) {
+        pollManager.addPoll(poll);
+        return poll;
     }
+
+//    @PostMapping
+//    public void createPoll(@RequestBody Poll poll) {
+////    TODO: Set the user?
+//
+////      User user = poll.getCreatedBy();
+////      poll.setCreatedBy(user);
+////      String pollId = UUID.randomUUID().toString();
+//      for (VoteOption option : poll.getVoteOptions()) {
+//        option.setPoll(poll);
+////        voteOptionRepo.save(option);
+//      }
+//      pollsRepo.save(poll);
+////      voteOptionRepo.saveAll(poll.getVoteOptions());
+//    }
 
     @PutMapping("/{pollId}")
     public void updatePoll(@PathVariable String pollId, @RequestBody Poll poll) {
-        pollManager.addPoll(pollId, poll);
+        pollManager.addPoll(poll);
     }
 
     @DeleteMapping("/{pollId}")

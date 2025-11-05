@@ -11,8 +11,8 @@ import jakarta.persistence.*;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
     
     @Column(nullable = false, unique = true)
     private String username;
@@ -32,9 +32,10 @@ public class User {
     public User(String username, String email) {
         this.username = username;
         this.email = email;
+        this.created = new LinkedHashSet<>();
     }
 
-    public Long getId() { 
+    public String getId() {
         return this.id; 
     }
 

@@ -9,8 +9,8 @@ import jakarta.persistence.*;
 public class Vote {
     
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
     @Column(nullable = false)
     private Instant publishedAt;
@@ -21,7 +21,7 @@ public class Vote {
 
     public Vote() {}
 
-    public Long getId() { 
+    public String getId() {
         return this.id; 
     }
 

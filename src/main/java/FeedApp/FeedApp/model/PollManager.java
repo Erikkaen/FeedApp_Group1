@@ -1,71 +1,103 @@
 package FeedApp.FeedApp.model;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
+import FeedApp.FeedApp.repositories.PollsRepo;
+import FeedApp.FeedApp.repositories.UserRepo;
+import FeedApp.FeedApp.repositories.VoteOptionRepo;
+import FeedApp.FeedApp.repositories.VoteRepo;
 import org.springframework.stereotype.Component;
 
 @Component
 public class PollManager {
-    private final Map<String, User> users = new HashMap<>();
-    private final Map<String, Poll> polls = new HashMap<>();
-    private final Map<String, Vote> votes = new HashMap<>();
+//    private final Map<String, User> users = new HashMap<>();
+//    private final Map<String, Poll> polls = new HashMap<>();
+//    private final Map<String, Vote> votes = new HashMap<>();
+  private final UserRepo userRepo;
+  private final VoteRepo voteRepo;
+  private final VoteOptionRepo voteOptionRepo;
+  private final PollsRepo pollRepo;
 
-    public Map<String, User> getUsers() {
-        return this.users;
-    }
+  public PollManager(UserRepo userRepo, VoteRepo voteRepo, VoteOptionRepo voteOptionRepo, PollsRepo pollRepo) {
+    this.userRepo = userRepo;
+    this.voteRepo = voteRepo;
+    this.voteOptionRepo = voteOptionRepo;
+    this.pollRepo = pollRepo;
+  }
 
-    public Map<String, Poll> getPolls() {
-        return this.polls;
-    }
-
-    public Map<String, Vote> getVotes() {
-        return this.votes;
-    }
+  public Iterable<User>  getUsers() {
+    return userRepo.findAll();
+  }
 
     // user methods
     public void addUser(String username, User user) {
-        this.users.put(username, user);
+        userRepo.save(user);
     }
-    public User getUser(String username) {
-        return this.users.get(username);
+    public Optional<User> getUser(String userId) {
+        return userRepo.findById(userId);
     }
     public boolean removeUser(String username) {
-        return users.remove(username) != null;
+      userRepo.deleteById(username);
+      return true;
     }
 
     // poll methods
-    public void addPoll(String pollId, Poll poll) {
-        this.polls.put(pollId, poll);
+    public void addPoll(Poll poll) {
+      for (VoteOption option : poll.getVoteOptions()) {
+        option.setPoll(poll);
+//        voteOptionRepo.save(option);
+      }
+      pollRepo.save(poll);
     }
 
-    public Poll getPoll(String pollId) {
-        return this.polls.get(pollId);
+    public Iterable<Poll> getPolls() {
+    return pollRepo.findAll();
+  }
+
+    public Optional<Poll> getPoll(String pollId) {
+        return pollRepo.findById(pollId);
     }
 
     public boolean removePoll(String pollId) {
-        return polls.remove(pollId) != null;
+      pollRepo.deleteById(pollId);
+      return true;
     }
 
     // vote methods
-    public void addVote(String pollId, Vote vote, String username) {
-        this.votes.put(pollId + "-" + username, vote);
+    public void addVote(String pollId, Vote vote, String userId, String optionId) {
+    //TODO: get this method to work
+        Optional<User> user = userRepo.findById(userId);
+        Optional<Poll> poll = pollRepo.findById(pollId);
+        Optional<VoteOption> option = voteOptionRepo.findById(optionId);
     }
 
-    public void updateVote(String pollId, Vote vote, String username) {
-        this.votes.put(pollId + "-" + username, vote);
-    }
+    //TODO: change this method to use the database
+//    public void updateVote(String pollId, Vote vote, String username) {
+//        this.votes.put(pollId + "-" + username, vote);
+//    }
 
-    public Vote getVote(String pollId, String username) {
-        return this.votes.get(pollId + "-" + username);
+    public Vote getVote(String pollId, String userId) {
+        return voteRepo.findById(pollId + "-" + userId).orElse(null);
     }
 
     public boolean removeVote(String pollId, String username) {
-        String key = pollId + "-" + username;
-        return votes.remove(key) != null;
+        Vote vote = voteRepo.findById(pollId + "-" + username).orElse(null);
+        if (vote == null)  return false;
+        voteRepo.deleteById(pollId + "-" + username);
+        return true;
     }
 
+    public Collection<Vote> getVotes(String pollId) {
+      Poll poll = pollRepo.findById(pollId)
+          .orElseThrow(() -> new RuntimeException("Poll not found"));
+
+      return voteRepo.findAllById(pollId);
+  }
+
     public void removeVotes(String pollId) {
-        this.votes.keySet().removeIf(key -> key.startsWith(pollId + "-"));
+        voteRepo.deleteById(pollId);
     }
 }

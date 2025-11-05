@@ -11,17 +11,17 @@ import jakarta.persistence.*;
 public class Poll {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
     @Column(nullable = false)
     private String question;
     
     private Instant publishedAt;
-    private Instant validUntil;
+//    private Instant validUntil;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "created_by", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by")
     private User createdBy;
     
     @OneToMany(mappedBy = "poll", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -30,11 +30,12 @@ public class Poll {
 
     public Poll() {}
 
-    public Long getId() { 
+    public String getId() {
         return this.id; 
     }
 
-    public String getQuestion() {
+
+  public String getQuestion() {
         return this.question;
     }
     public void setQuestion(String question) {
@@ -48,12 +49,12 @@ public class Poll {
         this.publishedAt = publishedAt;
     }
 
-    public Instant getValidUntil() {
-        return this.validUntil;
-    }
-    public void setValidUntil(Instant validUntil) {
-        this.validUntil = validUntil;
-    }
+//    public Instant getValidUntil() {
+//        return this.validUntil;
+//    }
+//    public void setValidUntil(Instant validUntil) {
+//        this.validUntil = validUntil;
+//    }
 
     public List<VoteOption> getOptions() {
         return this.options;
@@ -68,6 +69,16 @@ public class Poll {
 
     public void setCreatedBy(User createdBy) {
         this.createdBy = createdBy;
+    }
+  public List<VoteOption> getVoteOptions() {
+    return options;
+  }
+
+    public Poll(String question) {
+      this.question = question;
+      this.options = new ArrayList<>();
+      this.publishedAt = Instant.now();
+      this.createdBy = createdBy;
     }
 
     /**
