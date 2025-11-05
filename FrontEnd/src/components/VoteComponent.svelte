@@ -66,17 +66,18 @@
           <ul>
             {#each poll.options as opt}
               <li>
-                <label>
-                  <input
+                <label class = "poll-option">
+                    <input
                     type="radio"
                     name={`option-${pollId}`}
                     bind:group={selectedOptions[pollId]}
                     value={opt}
                     disabled={voting[pollId]}
                   />
+
                   {opt.presentationOrder}. {opt.caption}
                   {#if opt.voteCount !== undefined}
-                    <span style="margin-left:10px; color: #555;">Votes: {opt.voteCount}</span>
+                    <span class="votes">Votes: {opt.voteCount}</span>
                   {/if}
                 </label>
               </li>
@@ -89,26 +90,4 @@
   {/if}
 </div>
 
-<style>
-  .component {
-    border: 1px solid #ccc;
-    padding: 20px;
-    margin-bottom: 30px;
-    border-radius: 5px;
-  }
-  .poll {
-    margin-bottom: 20px;
-    padding: 10px;
-    border-bottom: 1px solid #eee;
-  }
-  ul {
-    list-style: none;
-    padding-left: 0;
-  }
-  li {
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-</style>
+

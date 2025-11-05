@@ -25,28 +25,4 @@
   <button on:click={createUser}>Create User</button>
 </div>
 
-<style>
-  .component {
-    border: 1px solid #ccc;
-    padding: 20px;
-    margin-bottom: 30px;
-    border-radius: 5px;
-    width: 250px;
-  }
-  input {
-    display: block;
-    margin-bottom: 10px;
-    padding: 5px;
-    width: 100%;
-  }
-  button {
-    background: lightgrey;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  button:hover {
-    background: #ddd;
-  }
-</style>
+
