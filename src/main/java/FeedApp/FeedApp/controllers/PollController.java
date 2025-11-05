@@ -41,7 +41,7 @@ public class PollController {
 
             for (Vote vote : pollManager.getVotes().values()) {
                 for (VoteOption voteOption : poll.getOptions()) {
-                    if (voteOption.getPresentationOrder() == vote.getOption().getPresentationOrder()) {
+                    if (voteOption.getPresentationOrder() == vote.getVotesOn().getPresentationOrder()) {
                         voteOption.setVoteCount(voteOption.getVoteCount() + 1);
                     }
                 }

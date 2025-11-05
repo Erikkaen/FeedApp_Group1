@@ -2,11 +2,28 @@ package FeedApp.FeedApp.model;
 
 import java.time.Instant;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "votes")
 public class Vote {
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
     private Instant publishedAt;
-    private VoteOption option;
+
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "option_id", nullable = false)
+    private VoteOption votesOn;
 
     public Vote() {}
+
+    public Long getId() { 
+        return this.id; 
+    }
 
     public Instant getPublishedAt() {
         return this.publishedAt;
@@ -16,11 +33,11 @@ public class Vote {
         this.publishedAt = publishedAt;
     }
 
-    public VoteOption getOption() {
-        return option;
+    public VoteOption getVotesOn() {
+        return this.votesOn;
     }
 
-    public void setOption(VoteOption option) {
-        this.option = option;
+    public void setVotesOn(VoteOption votesOn) {
+        this.votesOn = votesOn;
     }
 }

@@ -15,8 +15,9 @@ import jakarta.persistence.PersistenceConfiguration;
 import FeedApp.FeedApp.model.User;
 import FeedApp.FeedApp.model.Poll;
 import FeedApp.FeedApp.model.VoteOption;
+import FeedApp.FeedApp.model.Vote;
 
-public class FeedAppApplicationTests {
+public class PollsTest {
 
     private EntityManagerFactory emf;
 
@@ -36,10 +37,10 @@ public class FeedAppApplicationTests {
         VoteOption no = poll2.addVoteOption("Mamma mia: Nooooo!");
         em.persist(poll);
         em.persist(poll2);
-        /* em.persist(alice.voteFor(vim));
+        em.persist(alice.voteFor(vim));
         em.persist(bob.voteFor(vim));
         em.persist(eve.voteFor(emacs));
-        em.persist(eve.voteFor(yes));*/
+        em.persist(eve.voteFor(yes));
     }
 
     @BeforeEach
