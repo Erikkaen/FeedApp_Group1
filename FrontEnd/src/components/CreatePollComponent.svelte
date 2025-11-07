@@ -9,7 +9,6 @@
     const pollData = {
       question,
       publishedAt: new Date().toISOString(),
-      validUntil: null,
       options: options.map((opt, i) => ({
         caption: opt,
         presentationOrder: i + 1
@@ -22,9 +21,9 @@
       body: JSON.stringify(pollData),
     });
 
-    const pollId = await res.text();
-    console.log("Created poll:", pollId);
-    dispatch("pollCreated");
+    const createdPoll = await res.json();
+    console.log("Created poll:", createdPoll);
+    dispatch("pollCreated", { poll: createdPoll });
   }
 
   function addOption() {

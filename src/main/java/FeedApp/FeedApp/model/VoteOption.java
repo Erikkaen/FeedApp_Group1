@@ -19,9 +19,9 @@ public class VoteOption {
     @Column(nullable = false)
     private int voteCount = 0;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "poll_id", nullable = false)
-    private Poll poll;
+//    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+//    @JoinColumn(name = "poll_id", nullable = false)
+//    private Poll poll;
 
     public VoteOption() {}
 
@@ -53,11 +53,11 @@ public class VoteOption {
         this.presentationOrder = presentationOrder;
     }
 
-    public Poll getPoll() {
-        return poll;
-    }
-
-    public void setPoll(Poll poll) {
-        this.poll = poll;
-    }
+//    public Poll getPoll() {
+//        return poll;
+//    }
+//
+//    public void setPoll(Poll poll) {
+//        this.poll = poll;
+//    }
 }

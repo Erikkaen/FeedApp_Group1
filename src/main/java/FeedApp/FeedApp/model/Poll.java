@@ -24,7 +24,7 @@ public class Poll {
     @JoinColumn(name = "created_by")
     private User createdBy;
     
-    @OneToMany(mappedBy = "poll", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany( cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("presentationOrder ASC")
     private List<VoteOption> options = new ArrayList<>();
 
@@ -70,13 +70,10 @@ public class Poll {
     public void setCreatedBy(User createdBy) {
         this.createdBy = createdBy;
     }
-  public List<VoteOption> getVoteOptions() {
-    return options;
-  }
+
 
     public Poll(String question) {
       this.question = question;
-      this.options = new ArrayList<>();
       this.publishedAt = Instant.now();
       this.createdBy = createdBy;
     }
@@ -94,7 +91,7 @@ public class Poll {
         VoteOption option = new VoteOption();
         option.setCaption(caption);
         option.setPresentationOrder(this.options.size());
-        option.setPoll(this);
+//        option.setPoll(this);
         this.options.add(option);
         return option;
     }

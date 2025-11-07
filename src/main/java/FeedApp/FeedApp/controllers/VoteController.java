@@ -1,7 +1,9 @@
 package FeedApp.FeedApp.controllers;
 
+import java.time.Instant;
 import java.util.Collection;
 
+import FeedApp.FeedApp.VoteRequest;
 import FeedApp.FeedApp.model.VoteOption;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -23,9 +25,10 @@ public class VoteController {
 
     @PostMapping("/{pollId}/{username}")
     public void addVote(@PathVariable String pollId, @PathVariable String username,
-                         @RequestBody Vote vote, @RequestBody String voteOption) {
-
-        pollManager.addVote(pollId, vote, username, voteOption);
+                        @RequestBody VoteRequest voteRequest) {
+        Vote vote = new Vote();
+        vote.setPublishedAt(Instant.now());
+        pollManager.addVote(pollId, vote, username, voteRequest.optionId);
     }
 
 //    @PutMapping("/{pollId}/{username}")

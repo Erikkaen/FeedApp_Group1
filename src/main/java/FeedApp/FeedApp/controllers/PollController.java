@@ -63,24 +63,10 @@ public class PollController {
 
     @PostMapping
     public Poll createPoll(@RequestBody Poll poll) {
+    //TODO: Set the user
         pollManager.addPoll(poll);
         return poll;
     }
-
-//    @PostMapping
-//    public void createPoll(@RequestBody Poll poll) {
-////    TODO: Set the user?
-//
-////      User user = poll.getCreatedBy();
-////      poll.setCreatedBy(user);
-////      String pollId = UUID.randomUUID().toString();
-//      for (VoteOption option : poll.getVoteOptions()) {
-//        option.setPoll(poll);
-////        voteOptionRepo.save(option);
-//      }
-//      pollsRepo.save(poll);
-////      voteOptionRepo.saveAll(poll.getVoteOptions());
-//    }
 
     @PutMapping("/{pollId}")
     public void updatePoll(@PathVariable String pollId, @RequestBody Poll poll) {

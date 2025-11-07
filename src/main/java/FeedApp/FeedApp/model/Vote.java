@@ -17,7 +17,7 @@ public class Vote {
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "option_id", nullable = false)
-    private VoteOption votesOn;
+    private VoteOption option;
 
     public Vote() {}
 
@@ -34,10 +34,10 @@ public class Vote {
     }
 
     public VoteOption getVotesOn() {
-        return this.votesOn;
+        return this.option;
     }
 
     public void setVotesOn(VoteOption votesOn) {
-        this.votesOn = votesOn;
+        this.option = votesOn;
     }
 }

@@ -46,10 +46,6 @@ public class PollManager {
 
     // poll methods
     public void addPoll(Poll poll) {
-      for (VoteOption option : poll.getVoteOptions()) {
-        option.setPoll(poll);
-//        voteOptionRepo.save(option);
-      }
       pollRepo.save(poll);
     }
 
@@ -68,10 +64,13 @@ public class PollManager {
 
     // vote methods
     public void addVote(String pollId, Vote vote, String userId, String optionId) {
-    //TODO: get this method to work
+      //TODO: Denne blir navnet på brukeren og ikke id-en
         Optional<User> user = userRepo.findById(userId);
         Optional<Poll> poll = pollRepo.findById(pollId);
-        Optional<VoteOption> option = voteOptionRepo.findById(optionId);
+        VoteOption option = voteOptionRepo.findById(optionId)
+            .orElseThrow(() -> new RuntimeException("Vote option not found"));
+        vote.setVotesOn(option);
+        voteRepo.save(vote);
     }
 
     //TODO: change this method to use the database

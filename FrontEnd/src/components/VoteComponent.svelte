@@ -26,11 +26,12 @@
 
   async function submitVote(pollId) {
     const option = selectedOptions[pollId];
+    const optionId = option.id
     if (!option) return;
     voting[pollId] = true;
     const voteData = {
-      publishedAt: new Date().toISOString(),
-      option
+      option,
+      optionId
     };
     try {
       const res = await fetch(
@@ -50,6 +51,9 @@
       voting[pollId] = false;
     }
   }
+
+
+
 </script>
 
 <div class="component">
