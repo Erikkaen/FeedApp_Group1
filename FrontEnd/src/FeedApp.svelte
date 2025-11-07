@@ -2,35 +2,40 @@
   import CreateUserComponent from "./components/CreateUserComponent.svelte";
   import CreatePollComponent from "./components/CreatePollComponent.svelte";
   import VoteComponent from "./components/VoteComponent.svelte";
+  import LogIn from "./LogInPage.svelte";
+  import RegistratedUserPage from "./RegistratedUserPage.svelte";
+  import AnonymousUserPage from "./AnonymousUserPage.svelte";
+
 
   let currentUser = null;
   let pollRefresh = 0;
+  let page = "LogIn"; // <-- current page
 
   function handleUserCreated(user) {
     currentUser = user;
     console.log("Logged in as:", user.username);
+    page = 'regiUser'
   }
 
   function handlePollCreated() {
     pollRefresh += 1;
   }
+
+
 </script>
 
+
 <main>
-  <h2>FeedApp</h2>
+    {#if page === 'LogIn'}
+        <LogIn/>
 
-  <!-- Step 1: Create user -->
-  <CreateUserComponent on:userCreated={e => handleUserCreated(e.detail)} />
+    {:else if page === 'regiUser'}
+        <RegistratedUserPage/>
 
-  <!-- Step 2: Create poll -->
-  {#if currentUser}
-    <CreatePollComponent on:pollCreated={handlePollCreated} />
-  {/if}
+    {:else if page === 'AnonyUser'}
+        <AnonymousUserPage/>
+    {/if}
 
-  <!-- Step 3: Vote on poll -->
-  {#if currentUser}
-    <VoteComponent {currentUser} {pollRefresh} />
-  {/if}
 </main>
 
 <style>
