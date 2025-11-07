@@ -9,7 +9,9 @@ import FeedApp.FeedApp.repositories.PollsRepo;
 import FeedApp.FeedApp.repositories.UserRepo;
 import FeedApp.FeedApp.repositories.VoteOptionRepo;
 import FeedApp.FeedApp.repositories.VoteRepo;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 
 @Component
 public class PollManager {
@@ -70,6 +72,7 @@ public class PollManager {
         VoteOption option = voteOptionRepo.findById(optionId)
             .orElseThrow(() -> new RuntimeException("Vote option not found"));
         vote.setVotesOn(option);
+        option.setVoteCount(vote.getVotesOn().getVoteCount() + 1);
         voteRepo.save(vote);
     }
 
@@ -94,6 +97,21 @@ public class PollManager {
           .orElseThrow(() -> new RuntimeException("Poll not found"));
 
       return voteRepo.findAllById(pollId);
+  }
+
+  public int getVoteCount(String pollId, String optionId) {
+
+    Poll poll = pollRepo.findById(pollId)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+            "Poll not found"));
+
+    VoteOption option = poll.getOptions().stream()
+        .filter(opt -> opt.getId().equals(optionId))
+        .findFirst()
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+            "Option not found in poll"));
+
+    return option.getVoteCount();
   }
 
     public void removeVotes(String pollId) {

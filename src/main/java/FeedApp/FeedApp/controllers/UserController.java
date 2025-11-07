@@ -10,7 +10,7 @@ import FeedApp.FeedApp.model.User;
 
 import java.util.Optional;
 
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/users")
 public class UserController {

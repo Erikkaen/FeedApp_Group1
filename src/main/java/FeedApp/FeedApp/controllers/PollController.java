@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/polls")
 public class PollController {
@@ -36,22 +36,7 @@ public class PollController {
 
     @GetMapping
     public Iterable<Poll> getAllPolls() {
-      Iterable<Poll> polls = pollManager.getPolls();
-
-        for (Poll poll : polls) {
-            for (VoteOption voteOption : poll.getOptions()) {
-                voteOption.setVoteCount(0);
-            }
-
-            for (Vote vote : pollManager.getVotes(poll.getId())) {
-                for (VoteOption voteOption : poll.getOptions()) {
-                    if (voteOption.getPresentationOrder() == vote.getVotesOn().getPresentationOrder()) {
-                        voteOption.setVoteCount(voteOption.getVoteCount() + 1);
-                    }
-                }
-            }
-        }
-        return polls;
+      return pollManager.getPolls();
     }
 
     @GetMapping("/{pollId}")

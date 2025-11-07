@@ -12,7 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 import FeedApp.FeedApp.model.PollManager;
 import FeedApp.FeedApp.model.Vote;
 
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/votes")
 public class VoteController {
@@ -42,6 +42,12 @@ public class VoteController {
 //    public Collection<Vote> getAllVotes() {
 //        return pollManager.getVotes().values();
 //    }
+
+  @GetMapping("/{pollId}/option/{optionId}")
+  public int getVoteCount(@PathVariable String pollId,
+                          @PathVariable String optionId) {
+    return pollManager.getVoteCount(pollId, optionId);
+  }
 
     @GetMapping("/{pollId}/{username}")
     public Vote getVote(@PathVariable String pollId, @PathVariable String username) {
