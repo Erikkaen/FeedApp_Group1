@@ -5,6 +5,11 @@
   let username = "";
   let email = "";
 
+
+  async function guest() {
+
+  }
+
   async function createUser() {
     const userData = { username, email };
 
@@ -17,6 +22,11 @@
     dispatch("userCreated", userData);
   }
 </script>
+
+<div class="component">
+  <!-- <h2>Continue as guest</h2> -->
+  <button on:click={guest}>Continue as guest</button>
+</div>
 
 <div class="component">
   <h2>Create User</h2>
