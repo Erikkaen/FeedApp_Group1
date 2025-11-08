@@ -1,48 +1,64 @@
 <script>
   import CreateUserComponent from "./components/CreateUserComponent.svelte";
-  import CreatePollComponent from "./components/CreatePollComponent.svelte";
-  import VoteComponent from "./components/VoteComponent.svelte";
-  import LogIn from "./LogInPage.svelte";
-  import RegistratedUserPage from "./RegistratedUserPage.svelte";
-  import AnonymousUserPage from "./AnonymousUserPage.svelte";
+  /* import CreatePollComponent from "./components/CreatePollComponent.svelte";
+  import VoteComponent from "./components/VoteComponent.svelte"; */
+  import HomePage from "./HomePage.svelte";
+  import LoggedIn from "./LoggedIn.svelte";
+  import GuestPage from "./GuestPage.svelte";
+  import LoginForm from "./LoginForm.svelte";
 
 
   let currentUser = null;
-  let pollRefresh = 0;
-  let page = "LogIn"; // <-- current page
+  // let pollRefresh = 0;
+  let currentPage = "home";
 
   function handleUserCreated(user) {
     currentUser = user;
-    console.log("Logged in as:", user.username);
-    page = 'regiUser'
+    console.log("Registrated user: ", user.username);
+    currentPage = "loggedIn"
   }
 
-  function handlePollCreated() {
+  function continueAsGuest() {
+    currentPage = "anonymous";
+  }
+
+  function goToLogin() {
+    currentPage = "loginForm";
+  }
+
+  function goToRegister() {
+    currentPage = "registerForm";
+  }
+
+  /* function handlePollCreated() {
     pollRefresh += 1;
-  }
-
+  } */
 
 </script>
 
 
 <main>
-    {#if page === 'LogIn'}
-        <LogIn/>
+  {#if currentPage === "home"}
+    <HomePage
+      on:userCreated={(e) => handleUserCreated(e.detail)}
+      on:guest={continueAsGuest}
+      on:login={goToLogin}
+      on:register={goToRegister}
+    />
 
-    {:else if page === 'regiUser'}
-        <RegistratedUserPage/>
+  {:else if currentPage === "loggedIn"}
+    <LoggedIn {currentUser}/>
 
-    {:else if page === 'AnonyUser'}
-        <AnonymousUserPage/>
-    {/if}
+  {:else if currentPage === "loginForm"}
+    <LoginForm 
+      on:userCreated={(e) => handleUserCreated(e.detail)}
+    />
+  {:else if currentPage === "registerForm"}
+    <CreateUserComponent
+      on:userCreated={(e) => handleUserCreated(e.detail)}
+    />
+  {:else if currentPage === "anonymous"}
+    <GuestPage/>
+  {/if}
 
 </main>
-
-<style>
-  main {
-    max-width: 800px;
-    margin: auto;
-    padding: 20px;
-    font-family: sans-serif;
-  }
-</style>

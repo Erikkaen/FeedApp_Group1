@@ -6,9 +6,9 @@
   let email = "";
 
 
-  async function guest() {
+/*   async function guest() {
 
-  }
+  } */
 
   async function createUser() {
     const userData = { username, email };
@@ -23,16 +23,15 @@
   }
 </script>
 
-<div class="component">
-  <!-- <h2>Continue as guest</h2> -->
+<!-- <div class="component">
   <button on:click={guest}>Continue as guest</button>
-</div>
+</div> -->
 
 <div class="component">
-  <h2>Create User</h2>
+  <h2>Register Form</h2>
   <input placeholder="Username" bind:value={username} />
   <input placeholder="Email" bind:value={email} />
-  <button on:click={createUser}>Create User</button>
+  <button on:click={createUser}>Register</button>
 </div>
 
 

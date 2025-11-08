@@ -14,10 +14,10 @@
 }
 
 .poll-option {
-    display: grid;
-    grid-template-columns: 1fr auto auto;
-    align-items: center;
-    column-gap: 10px;
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  column-gap: 10px;
 }
 
 a {
@@ -30,41 +30,50 @@ a:hover {
 }
 
 .component {
-    border: 1px solid #ccc;
-    padding: 20px;
-    margin-bottom: 30px;
-    border-radius: 30px;
-    background-color: darkslategrey;
-    place-items: center;
+  border: 1px solid #ccc;
+  padding: 20px;
+  margin-bottom: 30px;
+  border-radius: 30px;
+  background-color: darkslategrey;
+  place-items: center;
+}
+
+.homeComponent {
+  border: 1px solid #ccc;
+  padding: 10px 10px 20px 10px;
+  margin: 40px 0px 40px 0px;
+  border-radius: 30px;
+  background-color: #bdacd1;
+  place-items: center;
 }
 
 .poll {
-    margin-bottom: 20px;
-    padding: 10px;
-    border-bottom: 1px solid #eee;
+  margin-bottom: 20px;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
 }
 ul {
-    list-style: none;
-    padding-left: 0;
+  list-style: none;
+  padding-left: 0;
 }
 
 li {
-    margin-bottom: 8px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 10px;
+  margin-bottom: 8px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
 }
 
 input {
-    display: block;
-    margin-bottom: 10px;
-    padding: 5px;
+  display: block;
+  margin-bottom: 10px;
+  padding: 5px;
 }
 
 .votes {
-    margin-left:10px;
-    color: darkgray;
+  margin-left:10px;
+  color: darkgray;
 }
 
 body {
@@ -109,6 +118,25 @@ button:hover {
 }
 button:focus,
 button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+.homeButton {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #ececec;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+.homeButton:hover {
+  background: #ddd;
+}
+.homeButton:focus,
+.homeButton:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
