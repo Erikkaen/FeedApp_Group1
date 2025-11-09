@@ -34,7 +34,7 @@ a:hover {
   padding: 20px;
   margin-bottom: 30px;
   border-radius: 30px;
-  background-color: darkslategrey;
+  background-color: #ff4e9f;
   place-items: center;
 }
 
@@ -43,7 +43,7 @@ a:hover {
   padding: 10px 10px 20px 10px;
   margin: 40px 0px 40px 0px;
   border-radius: 30px;
-  background-color: darkslategrey;
+  background-color: #ff4e9f;
   place-items: center;
 }
 
