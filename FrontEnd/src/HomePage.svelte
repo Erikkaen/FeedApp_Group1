@@ -29,7 +29,7 @@
 
     <!-- Login -->
     <div class="homeComponent">
-    <h3>Already have a user?</h3>
+    <h3>Already have an account?</h3>
     <button class="homeButton" on:click={login}>Login</button>
     </div>
    
