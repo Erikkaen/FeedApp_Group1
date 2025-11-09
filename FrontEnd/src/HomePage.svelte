@@ -19,7 +19,7 @@
 
 <main>
     <h1>FeedApp</h1>
-    <h2>Create polls or vote on polls!</h2>
+    <h2>Your very own poll app!</h2>
 
     <!-- Go to registration -->
     <div class="homeComponent">
@@ -29,7 +29,7 @@
 
     <!-- Login -->
     <div class="homeComponent">
-    <h3>Login</h3>
+    <h3>Already have a user?</h3>
     <button class="homeButton" on:click={login}>Login</button>
     </div>
    
