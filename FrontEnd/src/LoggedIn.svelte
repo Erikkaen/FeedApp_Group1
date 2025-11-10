@@ -8,7 +8,7 @@
 
 <main>
     <h2>Welcome, {currentUser.username}!</h2>
-    <CreatePollComponent on:pollCreated={() => (pollRefresh = Date.now())} />
+    <CreatePollComponent {currentUser} on:pollCreated={() => (pollRefresh = Date.now())} />
     <VoteComponent {currentUser} {pollRefresh} />
 </main>
 

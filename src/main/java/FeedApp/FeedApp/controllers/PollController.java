@@ -42,13 +42,29 @@ public class PollController {
     @GetMapping("/{pollId}")
     public Optional<Poll> getPoll(@PathVariable String pollId) {
       Optional<Poll> poll = pollManager.getPoll(pollId);
-    if (poll == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Poll not found");
+    if (poll.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Poll not found");
     return poll;
     }
 
-    @PostMapping
-    public Poll createPoll(@RequestBody Poll poll) {
-    //TODO: Set the user
+    /*
+    @PostMapping("/{userId}")
+    public Poll createPoll(@PathVariable String userId, @RequestBody Poll poll) {
+        User user = pollManager.getUser(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+        poll.setCreatedBy(user);
+        pollManager.addPoll(poll);
+        return poll;
+    }*/
+
+    @PostMapping("/{username}")
+    public Poll createPoll(@PathVariable String username, @RequestBody Poll poll) {
+        Optional<User> userOpt = pollManager.getUserByUsername(username);
+        if (userOpt.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+        }
+        User user = userOpt.get();
+        poll.setCreatedBy(user);
         pollManager.addPoll(poll);
         return poll;
     }

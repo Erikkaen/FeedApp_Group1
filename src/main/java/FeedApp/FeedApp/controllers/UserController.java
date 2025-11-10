@@ -1,10 +1,13 @@
 package FeedApp.FeedApp.controllers;
 
 import FeedApp.FeedApp.repositories.UserRepo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import FeedApp.FeedApp.services.PasswordService;
 import FeedApp.FeedApp.model.PollManager;
 import FeedApp.FeedApp.model.User;
 
@@ -16,11 +19,14 @@ import java.util.Optional;
 public class UserController {
 
     private final PollManager pollManager;
-  private final UserRepo userRepo;
+    private final UserRepo userRepo;
+    private final PasswordService passwordService;
 
-  public UserController(PollManager pollManager, UserRepo userRepo) {
-        this.pollManager = pollManager;
+    @Autowired
+  public UserController(PollManager pollManager, UserRepo userRepo, PasswordService passwordService) {
+    this.pollManager = pollManager;
     this.userRepo = userRepo;
+    this.passwordService = passwordService;
   }
 
     @GetMapping
@@ -40,9 +46,15 @@ public class UserController {
 //    return userRepo.findById(userId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 //  }
 
+    // REGISTER USER
     @PostMapping
-    public void createUser(@RequestBody User user) {
+    public ResponseEntity<User> createUser(@RequestBody User user) {
+        //HASHING PASSWORD HERE
+        String encodedPassword = passwordService.encode(user.getPassword());
+        user.setPassword(encodedPassword);
+
         pollManager.addUser(user.getUsername(), user);
+        return ResponseEntity.ok(user);
     }
 
 //  @PostMapping
@@ -64,6 +76,26 @@ public class UserController {
     public void deleteUser(@PathVariable String username) {
         boolean removed = pollManager.removeUser(username);
         if (!removed) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+    }
+
+    // LOGIN USER
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody User loginRequest) {
+        Optional<User> userOpt = pollManager.getUserByUsername(loginRequest.getUsername());
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
+        }
+        User user = userOpt.get();
+        boolean passwordMatches = passwordService.matches(
+                loginRequest.getPassword(),
+                user.getPassword()
+        );
+
+        if (passwordMatches) {
+            return ResponseEntity.ok(user);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+        }
     }
 
 //  @DeleteMapping("/{username}")

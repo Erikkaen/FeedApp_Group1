@@ -1,30 +1,48 @@
 <script>
   let question = "";
   let options = [""];
+  export let currentUser;
 
   import { createEventDispatcher } from "svelte";
   const dispatch = createEventDispatcher();
 
   async function createPoll() {
-    const pollData = {
-      question,
-      publishedAt: new Date().toISOString(),
-      options: options.map((opt, i) => ({
-        caption: opt,
-        presentationOrder: i + 1
-      }))
-    };
+      if (!currentUser || !currentUser.username) {
+          alert("You must be logged in to create a poll!");
+          return;
+      }
 
-    const res = await fetch("http://localhost:8080/polls", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(pollData),
-    });
+      const pollData = {
+          question,
+          publishedAt: new Date().toISOString(),
+          options: options.map((opt, i) => ({
+              caption: opt,
+              presentationOrder: i
+          }))
+      };
 
-    const createdPoll = await res.json();
-    console.log("Created poll:", createdPoll);
-    dispatch("pollCreated", { poll: createdPoll });
+      try {
+          const res = await fetch(`http://localhost:8080/polls/${currentUser.username}`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(pollData),
+          });
+
+          if (!res.ok) {
+              const text = await res.text();
+              console.error("Failed to create poll:", res.status, text);
+              alert("Failed to create poll: " + text);
+              return;
+          }
+
+          const createdPoll = await res.json();
+          console.log("Created poll:", createdPoll);
+          dispatch("pollCreated", { poll: createdPoll });
+      } catch (error) {
+          console.error("Error creating poll:", error);
+      }
   }
+
 
   function addOption() {
     options = [...options, ""];

@@ -38,6 +38,11 @@ public class PollManager {
     public void addUser(String username, User user) {
         userRepo.save(user);
     }
+
+    public Optional<User> getUserByUsername(String username) {
+        return userRepo.findByUsername(username);
+    }
+
     public Optional<User> getUser(String userId) {
         return userRepo.findById(userId);
     }

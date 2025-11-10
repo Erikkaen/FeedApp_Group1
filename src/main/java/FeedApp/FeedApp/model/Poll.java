@@ -4,6 +4,9 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -20,8 +23,9 @@ public class Poll {
     private Instant publishedAt;
 //    private Instant validUntil;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "created_by")
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    @JsonBackReference
     private User createdBy;
     
     @OneToMany( cascade = CascadeType.ALL, orphanRemoval = true)

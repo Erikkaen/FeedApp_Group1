@@ -4,34 +4,37 @@
 
   let username = "";
   let email = "";
+  let password = "";
 
 
-/*   async function guest() {
-
-  } */
 
   async function createUser() {
-    const userData = { username, email };
+      const userData = { username, email, password };
 
-    await fetch("http://localhost:8080/users", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(userData),
-    });
+      try {
+          const res = await fetch("http://localhost:8080/users", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(userData),
+          });
 
-    dispatch("userCreated", userData);
+          if (!res.ok) {
+              console.error("Registration failed");
+              return;
+          }
+
+          const createdUser = await res.json();
+          dispatch("userCreated", createdUser);
+      } catch (err) {
+          console.error("Error registering:", err);
+      }
   }
 </script>
 
-<!-- <div class="component">
-  <button on:click={guest}>Continue as guest</button>
-</div> -->
-
 <div class="component">
-  <h2>Register Form</h2>
-  <input placeholder="Username" bind:value={username} />
-  <input placeholder="Email" bind:value={email} />
-  <button on:click={createUser}>Register</button>
+    <h2>Register</h2>
+    <input placeholder="Username" bind:value={username} />
+    <input placeholder="Email" bind:value={email} />
+    <input type="password" placeholder="Password" bind:value={password} />
+    <button on:click={createUser}>Register</button>
 </div>
-
-
