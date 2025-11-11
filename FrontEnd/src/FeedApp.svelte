@@ -29,6 +29,9 @@
   function goToRegister() {
     currentPage = "registerForm";
   }
+  function goToHome() {
+    currentPage = "home";
+  }
 
   /* function handlePollCreated() {
     pollRefresh += 1;
@@ -44,6 +47,7 @@
       on:guest={continueAsGuest}
       on:login={goToLogin}
       on:register={goToRegister}
+      on:home={{goToHome}}
     />
 
   {:else if currentPage === "loggedIn"}
@@ -52,13 +56,17 @@
   {:else if currentPage === "loginForm"}
     <LoginForm 
       on:userCreated={(e) => handleUserCreated(e.detail)}
+      on:homePage={goToHome}
     />
   {:else if currentPage === "registerForm"}
     <CreateUserComponent
       on:userCreated={(e) => handleUserCreated(e.detail)}
+      on:homePage={goToHome}
     />
   {:else if currentPage === "anonymous"}
-    <GuestPage/>
+    <GuestPage
+      on:homePage={goToHome}
+    />
   {/if}
 
 </main>

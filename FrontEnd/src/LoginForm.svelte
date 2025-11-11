@@ -25,6 +25,10 @@
             console.error("Login error:", error);
         }
     }
+
+    function home() {
+        dispatch("homePage");
+    }
 </script>
 
 <div class="component">
@@ -33,3 +37,4 @@
     <input type="password" placeholder="Password" bind:value={password} />
     <button class="button" on:click={login}>Login</button>
 </div>
+<button class="backButton" on:click={home}>Go back</button>

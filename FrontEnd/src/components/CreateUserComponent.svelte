@@ -29,12 +29,16 @@
           console.error("Error registering:", err);
       }
   }
+  function home() {
+      dispatch("homePage");
+  }
 </script>
 
 <div class="component">
     <h2>Register</h2>
     <input placeholder="Username" bind:value={username} />
-    <input placeholder="Email" bind:value={email} />
+    <input type="email" placeholder="Email" bind:value={email} />
     <input type="password" placeholder="Password" bind:value={password} />
     <button on:click={createUser}>Register</button>
 </div>
+<button class="backButton" on:click={home}>Go back</button>
