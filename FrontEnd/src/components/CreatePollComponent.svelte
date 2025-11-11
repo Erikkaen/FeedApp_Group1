@@ -49,6 +49,7 @@
   }
 </script>
 
+
 <div class="component">
   <h2>Create Poll</h2>
   <input placeholder="Poll Question" bind:value={question} />

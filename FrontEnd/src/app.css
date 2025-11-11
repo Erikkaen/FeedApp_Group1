@@ -143,8 +143,8 @@ button:focus-visible {
 .backButton{
   border-radius: 8px;
   border: 1px solid transparent;
-  padding: 1.2em 1.2em;
-  margin-bottom: 1.2em;
+  padding: 1em 1em;
+  margin-bottom: 3em;
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;

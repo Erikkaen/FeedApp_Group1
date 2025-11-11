@@ -34,6 +34,7 @@
   }
 </script>
 
+<button class="backButton" on:click={home}>Go back</button>
 <div class="component">
     <h2>Register</h2>
     <input placeholder="Username" bind:value={username} />
@@ -41,4 +42,4 @@
     <input type="password" placeholder="Password" bind:value={password} />
     <button on:click={createUser}>Register</button>
 </div>
-<button class="backButton" on:click={home}>Go back</button>
+

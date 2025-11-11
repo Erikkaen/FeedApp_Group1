@@ -47,11 +47,11 @@
       on:guest={continueAsGuest}
       on:login={goToLogin}
       on:register={goToRegister}
-      on:home={{goToHome}}
     />
 
   {:else if currentPage === "loggedIn"}
-    <LoggedIn {currentUser}/>
+    <LoggedIn {currentUser}
+      on:homePage={goToHome}/>
 
   {:else if currentPage === "loginForm"}
     <LoginForm 

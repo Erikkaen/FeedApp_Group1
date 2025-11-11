@@ -12,8 +12,9 @@
 </script>
 
 <main>
-    <h2>Welcome, Guest</h2>
     <button class="backButton" on:click={home}>Go back</button>
+
+    <h2>Welcome, Guest</h2>
 
     <VoteComponent {currentUser} {pollRefresh} />
 </main>

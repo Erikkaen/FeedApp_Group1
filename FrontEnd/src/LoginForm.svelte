@@ -31,10 +31,11 @@
     }
 </script>
 
+<button class="backButton" on:click={home}>Go back</button>
+
 <div class="component">
     <h2>Login Form</h2>
     <input placeholder="Username" bind:value={username} />
     <input type="password" placeholder="Password" bind:value={password} />
     <button class="button" on:click={login}>Login</button>
 </div>
-<button class="backButton" on:click={home}>Go back</button>
