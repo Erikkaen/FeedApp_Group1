@@ -9,6 +9,7 @@ import FeedApp.FeedApp.model.*;
 import FeedApp.FeedApp.repositories.PollsRepo;
 import FeedApp.FeedApp.repositories.VoteOptionRepo;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,10 +41,9 @@ public class PollController {
     }
 
     @GetMapping("/{pollId}")
-    public Optional<Poll> getPoll(@PathVariable String pollId) {
-      Optional<Poll> poll = pollManager.getPoll(pollId);
-    if (poll.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Poll not found");
-    return poll;
+    public Poll getPoll(@PathVariable String pollId) {
+        return pollManager.getPoll(pollId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Poll not found"));
     }
 
     /*
@@ -58,15 +58,22 @@ public class PollController {
     }*/
 
     @PostMapping("/{username}")
-    public Poll createPoll(@PathVariable String username, @RequestBody Poll poll) {
+    public ResponseEntity<Poll> createPoll(@PathVariable String username, @RequestBody Poll poll)
+ {
         Optional<User> userOpt = pollManager.getUserByUsername(username);
         if (userOpt.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
         User user = userOpt.get();
         poll.setCreatedBy(user);
+
+        for (VoteOption opt : poll.getOptions()) {
+            opt.setPoll(poll);
+        }
+
         pollManager.addPoll(poll);
-        return poll;
+        return ResponseEntity.status(HttpStatus.CREATED).body(poll);
+
     }
 
     @PutMapping("/{pollId}")

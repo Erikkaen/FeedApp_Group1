@@ -1,11 +1,7 @@
 package FeedApp.FeedApp.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "vote_options")
@@ -24,9 +20,11 @@ public class VoteOption {
     @Column(nullable = false)
     private int voteCount = 0;
 
-//    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-//    @JoinColumn(name = "poll_id", nullable = false)
-//    private Poll poll;
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "poll_id", nullable = false)
+    @JsonBackReference
+    private Poll poll;
+
 
     public VoteOption() {}
 
@@ -58,11 +56,11 @@ public class VoteOption {
         this.presentationOrder = presentationOrder;
     }
 
-//    public Poll getPoll() {
-//        return poll;
-//    }
-//
-//    public void setPoll(Poll poll) {
-//        this.poll = poll;
-//    }
+    public Poll getPoll() {
+        return poll;
+    }
+
+    public void setPoll(Poll poll) {
+        this.poll = poll;
+    }
 }
