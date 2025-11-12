@@ -1,7 +1,6 @@
 package FeedApp.FeedApp.model;
 
 import java.time.Instant;
-
 import jakarta.persistence.*;
 
 @Entity
@@ -19,25 +18,26 @@ public class Vote {
     @JoinColumn(name = "option_id", nullable = false)
     private VoteOption option;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @Column
+    private String guestId;
+
     public Vote() {}
 
-    public String getId() {
-        return this.id; 
-    }
+    public String getId() {return this.id;}
 
-    public Instant getPublishedAt() {
-        return this.publishedAt;
-    }
+    public Instant getPublishedAt() {return this.publishedAt;}
+    public void setPublishedAt(Instant publishedAt) {this.publishedAt = publishedAt;}
 
-    public void setPublishedAt(Instant publishedAt) {
-        this.publishedAt = publishedAt;
-    }
+    public VoteOption getVotesOn() {return this.option;}
+    public void setVotesOn(VoteOption votesOn) {this.option = votesOn;}
 
-    public VoteOption getVotesOn() {
-        return this.option;
-    }
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
 
-    public void setVotesOn(VoteOption votesOn) {
-        this.option = votesOn;
-    }
+    public String getGuestId() { return guestId; }
+    public void setGuestId(String guestId) { this.guestId = guestId; }
 }

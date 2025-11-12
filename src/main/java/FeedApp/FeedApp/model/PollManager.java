@@ -70,16 +70,40 @@ public class PollManager {
     }
 
     // vote methods
-    public void addVote(String pollId, Vote vote, String userId, String optionId) {
-      //TODO: Denne blir navnet på brukeren og ikke id-en
-        Optional<User> user = userRepo.findById(userId);
-        Optional<Poll> poll = pollRepo.findById(pollId);
+    public void addVote(String pollId, Vote vote, String userIdOrGuestId, String optionId) {
         VoteOption option = voteOptionRepo.findById(optionId)
-            .orElseThrow(() -> new RuntimeException("Vote option not found"));
+                .orElseThrow(() -> new RuntimeException("Vote option not found"));
+
+        // Check if poll exists
+        Poll poll = pollRepo.findById(pollId)
+                .orElseThrow(() -> new RuntimeException("Poll not found"));
+
+        // Check user or guest
+        Optional<User> userOpt = userRepo.findById(userIdOrGuestId);
+        boolean alreadyVoted;
+
+        if (userOpt.isPresent()) {
+            alreadyVoted = voteRepo.existsByUser_IdAndOption_Poll_Id(userOpt.get().getId(), pollId);
+            if (alreadyVoted) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "User already voted");
+            }
+            vote.setUser(userOpt.get());
+        } else {
+            // Treat ID as guest id
+            alreadyVoted = voteRepo.existsByGuestIdAndOption_Poll_Id(userIdOrGuestId, pollId);
+            if (alreadyVoted) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Guest already voted");
+            }
+            vote.setGuestId(userIdOrGuestId);
+        }
+
         vote.setVotesOn(option);
-        option.setVoteCount(vote.getVotesOn().getVoteCount() + 1);
+        option.setVoteCount(option.getVoteCount() + 1);
+
         voteRepo.save(vote);
+        voteOptionRepo.save(option);
     }
+
 
     //TODO: change this method to use the database
 //    public void updateVote(String pollId, Vote vote, String username) {
@@ -101,7 +125,7 @@ public class PollManager {
       Poll poll = pollRepo.findById(pollId)
           .orElseThrow(() -> new RuntimeException("Poll not found"));
 
-      return voteRepo.findAllById(pollId);
+      return voteRepo.findAllByOption_Poll_Id(pollId);
   }
 
   public int getVoteCount(String pollId, String optionId) {

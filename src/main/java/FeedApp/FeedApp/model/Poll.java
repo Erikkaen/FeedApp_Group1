@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 @Entity
@@ -27,9 +28,10 @@ public class Poll {
     @JoinColumn(name = "user_id")
     @JsonBackReference
     private User createdBy;
-    
-    @OneToMany( cascade = CascadeType.ALL, orphanRemoval = true)
+
+    @OneToMany(mappedBy = "poll", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("presentationOrder ASC")
+    @JsonManagedReference
     private List<VoteOption> options = new ArrayList<>();
 
     public Poll() {}
@@ -95,7 +97,7 @@ public class Poll {
         VoteOption option = new VoteOption();
         option.setCaption(caption);
         option.setPresentationOrder(this.options.size());
-//        option.setPoll(this);
+        option.setPoll(this);
         this.options.add(option);
         return option;
     }
