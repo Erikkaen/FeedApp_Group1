@@ -66,6 +66,7 @@
   {:else if currentPage === "anonymous"}
     <GuestPage
       on:homePage={goToHome}
+      on:register={goToRegister}
     />
   {/if}
 
