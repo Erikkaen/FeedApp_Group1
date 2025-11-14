@@ -12,6 +12,7 @@ import FeedApp.FeedApp.repositories.VoteRepo;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
+import redis.clients.jedis.UnifiedJedis;
 
 @Component
 public class PollManager {
@@ -22,12 +23,14 @@ public class PollManager {
   private final VoteRepo voteRepo;
   private final VoteOptionRepo voteOptionRepo;
   private final PollsRepo pollRepo;
+  private final UnifiedJedis jedis;
 
-  public PollManager(UserRepo userRepo, VoteRepo voteRepo, VoteOptionRepo voteOptionRepo, PollsRepo pollRepo) {
+    public PollManager(UserRepo userRepo, VoteRepo voteRepo, VoteOptionRepo voteOptionRepo, PollsRepo pollRepo, UnifiedJedis jedis) {
     this.userRepo = userRepo;
     this.voteRepo = voteRepo;
     this.voteOptionRepo = voteOptionRepo;
     this.pollRepo = pollRepo;
+    this.jedis = jedis;
   }
 
   public Iterable<User>  getUsers() {
@@ -129,18 +132,39 @@ public class PollManager {
   }
 
   public int getVoteCount(String pollId, String optionId) {
+      String redisKey = "poll:" + pollId + ":results";
+
+      // 1. Try Redis cache
+      try {
+          String cached = jedis.hget(redisKey, optionId);
+          if (cached != null) {
+              return Integer.parseInt(cached);
+          }
+      } catch (Exception e) {
+          System.out.println("Redis OFFLINE -> Using database!");
+      }
 
     Poll poll = pollRepo.findById(pollId)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-            "Poll not found"));
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Poll not found"));
 
     VoteOption option = poll.getOptions().stream()
         .filter(opt -> opt.getId().equals(optionId))
         .findFirst()
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-            "Option not found in poll"));
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Option not found in poll"));
 
-    return option.getVoteCount();
+      int voteCount = option.getVoteCount();
+
+      // 3. Populate cache
+      try {
+          for (VoteOption opt : poll.getOptions()) {
+              jedis.hset(redisKey, opt.getId(), String.valueOf(opt.getVoteCount()));
+          }
+          jedis.expire(redisKey, 60);
+      } catch (Exception e) {
+          System.out.println("Redis OFFLINE -> Could not update cache.");
+      }
+
+      return voteCount;
   }
 
     public void removeVotes(String pollId) {
