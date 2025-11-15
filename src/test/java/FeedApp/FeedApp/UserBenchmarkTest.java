@@ -15,6 +15,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
+@ActiveProfiles("test")
 @SpringBootTest
 //@Transactional //Med Transactional så blir det ikke lagt til noe i databasen pga transaksjoner READ_COMMITED
 public class UserBenchmarkTest {
