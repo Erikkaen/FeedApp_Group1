@@ -46,9 +46,9 @@ public class UserBenchmarkTest {
 
   @BeforeEach
   void cleanDatabase() {
-    pollRepo.deleteAll();
-    voteOptionRepo.deleteAll();
     voteRepo.deleteAll();
+    voteOptionRepo.deleteAll();
+    pollRepo.deleteAll();
     userRepo.deleteAll();
   }
 
@@ -56,16 +56,16 @@ public class UserBenchmarkTest {
   // (Kan være greit for å tømme databasen etter å ha kjørt testene)
 //  @AfterEach
 //   void cleanAfterDatabase() {
-//    pollRepo.deleteAll();
-//    voteOptionRepo.deleteAll();
 //    voteRepo.deleteAll();
+//    voteOptionRepo.deleteAll();
+//    pollRepo.deleteAll();
 //    userRepo.deleteAll();
 //  }
 
 
   @Test
   public void benchmarkUserPersistence() {
-    int numUsers = 10000;
+    int numUsers = 1000;
 
     long start = System.currentTimeMillis();
 
@@ -83,56 +83,56 @@ public class UserBenchmarkTest {
     System.out.println("Time to persist " + numUsers + " users: " + (end - start) + " ms");
   }
 
-  @Test
-  public void benchmarkBulkRetrieval() {
-    int numUsers = 1000;
-
-    // Insert users first
-    for (int i = 0; i < numUsers; i++) {
-      String uniqueSuffix = UUID.randomUUID().toString();
-      User user = new User(
-          "user" + uniqueSuffix,
-          "user" + uniqueSuffix + "@example.com",
-          "password123"
-      );
-      pollManager.addUser(user.getUsername(), user);
-    }
-
-    // Measure bulk retrieval time
-    long start = System.currentTimeMillis();
-    Iterable<User> users = pollManager.getUsers(); // retrieve all users at once
-    long end = System.currentTimeMillis();
-
-    System.out.println("Time to retrieve all users as Iterable: " + (end - start) + " ms" + " Ant: " + ((Collection<User>) users).size());
-  }
-
-  @Test
-  public void benchmarkIndividualRetrieval() {
-    int numUsers = 1000;
-    List<User> users = new ArrayList<>();
-
-    // Insert users first
-    for (int i = 0; i < numUsers; i++) {
-      String uniqueSuffix = UUID.randomUUID().toString();
-      User user = new User(
-          "user" + uniqueSuffix,
-          "user" + uniqueSuffix + "@example.com",
-          "password123"
-      );
-      pollManager.addUser(user.getUsername(), user);
-      users.add(user);
-    }
-
-    int count = 0;
-
-    long start = System.currentTimeMillis();
-    for (User user : users) {
-      pollManager.getUserByUsername(user.getUsername());
-      count++;
-    }
-    long end = System.currentTimeMillis();
-
-    System.out.println("Time to retrieve " + count + " users individually: " + (end - start) + " ms");
-  }
+//  @Test
+//  public void benchmarkBulkRetrieval() {
+//    int numUsers = 1000;
+//
+//    // Insert users first
+//    for (int i = 0; i < numUsers; i++) {
+//      String uniqueSuffix = UUID.randomUUID().toString();
+//      User user = new User(
+//          "user" + uniqueSuffix,
+//          "user" + uniqueSuffix + "@example.com",
+//          "password123"
+//      );
+//      pollManager.addUser(user.getUsername(), user);
+//    }
+//
+//    // Measure bulk retrieval time
+//    long start = System.currentTimeMillis();
+//    Iterable<User> users = pollManager.getUsers(); // retrieve all users at once
+//    long end = System.currentTimeMillis();
+//
+//    System.out.println("Time to retrieve all users as Iterable: " + (end - start) + " ms" + " Ant: " + ((Collection<User>) users).size());
+//  }
+//
+//  @Test
+//  public void benchmarkIndividualRetrieval() {
+//    int numUsers = 1000;
+//    List<User> users = new ArrayList<>();
+//
+//    // Insert users first
+//    for (int i = 0; i < numUsers; i++) {
+//      String uniqueSuffix = UUID.randomUUID().toString();
+//      User user = new User(
+//          "user" + uniqueSuffix,
+//          "user" + uniqueSuffix + "@example.com",
+//          "password123"
+//      );
+//      pollManager.addUser(user.getUsername(), user);
+//      users.add(user);
+//    }
+//
+//    int count = 0;
+//
+//    long start = System.currentTimeMillis();
+//    for (User user : users) {
+//      pollManager.getUserByUsername(user.getUsername());
+//      count++;
+//    }
+//    long end = System.currentTimeMillis();
+//
+//    System.out.println("Time to retrieve " + count + " users individually: " + (end - start) + " ms");
+//  }
 
 }

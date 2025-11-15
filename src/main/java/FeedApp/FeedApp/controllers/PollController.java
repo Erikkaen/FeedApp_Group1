@@ -71,14 +71,21 @@ public class PollController {
             opt.setPoll(poll);
         }
 
-        pollManager.addPoll(poll);
+       try {
+         pollManager.addPoll(poll);
+       } catch (Exception e) {
+         throw new RuntimeException("Failed to create poll: " + e.getMessage(), e);
+       }
         return ResponseEntity.status(HttpStatus.CREATED).body(poll);
-
     }
 
     @PutMapping("/{pollId}")
     public void updatePoll(@PathVariable String pollId, @RequestBody Poll poll) {
+      try {
         pollManager.addPoll(poll);
+      } catch (Exception e) {
+        throw new RuntimeException();
+      }
     }
 
     @DeleteMapping("/{pollId}")

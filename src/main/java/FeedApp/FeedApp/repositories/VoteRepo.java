@@ -7,9 +7,7 @@ import java.util.Collection;
 public interface VoteRepo extends CrudRepository<Vote, String> {
     Collection<Vote> findAllByOption_Poll_Id(String pollId);
 
-    // 🆕 check if user already voted in poll
-    boolean existsByUser_IdAndOption_Poll_Id(String userId, String pollId);
+  boolean existsByUser_IdAndOption_Poll_Id(String userId, String pollId);
+  boolean existsByGuestIdAndOption_Poll_Id(String guestId, String pollId);
 
-    // 🆕 check if guest already voted in poll
-    boolean existsByGuestIdAndOption_Poll_Id(String guestId, String pollId);
 }

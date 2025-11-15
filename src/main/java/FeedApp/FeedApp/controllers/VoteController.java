@@ -1,7 +1,5 @@
 package FeedApp.FeedApp.controllers;
 
-import java.time.Instant;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import FeedApp.FeedApp.VoteRequest;
+import FeedApp.FeedApp.dto.VoteRequest;
 import FeedApp.FeedApp.model.PollManager;
 import FeedApp.FeedApp.model.Vote;
 
@@ -31,9 +29,7 @@ public class VoteController {
     @PostMapping("/{pollId}/{username}")
     public void addVote(@PathVariable String pollId, @PathVariable String username,
                         @RequestBody VoteRequest voteRequest) {
-        Vote vote = new Vote();
-        vote.setPublishedAt(Instant.now());
-        pollManager.addVote(pollId, vote, username, voteRequest.optionId);
+      pollManager.voteProduce(pollId, voteRequest.optionId, username);
     }
 
 //    @PutMapping("/{pollId}/{username}")

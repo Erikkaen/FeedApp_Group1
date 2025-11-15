@@ -27,17 +27,18 @@ dependencies {
     implementation("redis.clients:jedis:6.2.0")
 
     // H2 database
-	runtimeOnly("com.h2database:h2")
-	implementation("com.h2database:h2:2.3.232")
+//	runtimeOnly("com.h2database:h2")
+//	implementation("com.h2database:h2:2.3.232")
 
     // Postgres database
-//    implementation("org.postgresql:postgresql:42.7.7")
-//    runtimeOnly("org.postgresql:postgresql")
+    implementation("org.postgresql:postgresql:42.7.7")
+    runtimeOnly("org.postgresql:postgresql")
 
 	implementation("jakarta.persistence:jakarta.persistence-api:3.2.0")
 	implementation("org.hibernate.orm:hibernate-core:7.1.1.Final")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa:3.5.5")
     implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-amqp")
 }
 
 tasks.withType<Test> {

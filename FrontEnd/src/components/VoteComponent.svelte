@@ -37,7 +37,7 @@
   }
 
   async function submitVote(pollId) {
-      const optionId = selectedOptions[pollId]; // ✅ must be the selected option
+      const optionId = selectedOptions[pollId];
       if (!optionId) {
           alert("Please select an option before voting!");
           return;
