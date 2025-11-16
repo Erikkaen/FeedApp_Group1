@@ -1,6 +1,5 @@
 package FeedApp.FeedApp.model;
 
-import java.time.Instant;
 import java.util.*;
 
 import FeedApp.FeedApp.messaging.Producer;
@@ -11,9 +10,7 @@ import FeedApp.FeedApp.repositories.VoteRepo;
 import FeedApp.FeedApp.messaging.RabbitConsumer;
 import FeedApp.FeedApp.services.ConsumerService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rabbitmq.client.ConnectionFactory;
 import jakarta.annotation.PostConstruct;
-import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -74,7 +71,7 @@ public class PollManager {
     // poll methods
     public void addPoll(Poll poll) throws Exception {
       pollRepo.save(poll);
-      rabbitConsumer.createConsumerForPoll(poll.getId());
+      initTopic(poll.getId());
     }
 
     public Iterable<Poll> getPolls() {
@@ -90,30 +87,20 @@ public class PollManager {
       return true;
     }
 
+    public void initTopic(String pollId) throws Exception{
+      String exchangeName = "Poll_" + pollId;
+      producer.createTopicForPoll(exchangeName);
+      rabbitConsumer.createConsumerForPoll(exchangeName);
+    }
+
   @PostConstruct
-  public void initializePollListeners() {
+  public void createOnInit() throws Exception {
     List<Poll> polls = (List<Poll>) pollRepo.findAll(); // get all existing polls
     for (Poll poll : polls) {
-      attachListenerToQueue(poll.getId());
+      initTopic(poll.getId());
     }
   }
 
-  private void attachListenerToQueue(String pollId) {
-    String queueName = "pollQueue_" + pollId;
-    SimpleMessageListenerContainer container = new SimpleMessageListenerContainer(connectionFactory);
-    container.setQueueNames(queueName);
-    container.setMessageListener(message -> {
-      String voteMessage = new String(message.getBody());
-      try {
-        consumerService.votePersist(voteMessage);
-      } catch (Exception e) {
-        System.err.println("Error processing vote for poll " + pollId + ": " + e.getMessage());
-        e.printStackTrace();
-      }
-    });
-    container.start();
-    System.out.println("Listener attached to queue: " + queueName);
-  }
 
 
     // vote methods

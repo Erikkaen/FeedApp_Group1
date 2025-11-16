@@ -16,18 +16,16 @@ public class RabbitConsumer {
     this.consumerService = consumerService;
   }
 
-  public void createConsumerForPoll(String pollId) throws Exception {
+  public void createConsumerForPoll(String exchangeName) throws Exception {
     Channel channel = connection.createChannel();
-    channel.exchangeDeclare(EXCHANGE_NAME, "topic", true);
 
-
-    String queueName = "pollQueue_" + pollId;
+    String queueName = "pollQueue_" + exchangeName;
     boolean durable = true;
     boolean exclusive = false;
     boolean autoDelete = false;
 
     channel.queueDeclare(queueName, durable, exclusive, autoDelete, null);
-    channel.queueBind(queueName, EXCHANGE_NAME, pollId);
+    channel.queueBind(queueName, exchangeName, "");
 
     DeliverCallback callback = (consumerTag, message) -> {
       String body = new String(message.getBody());
@@ -36,6 +34,6 @@ public class RabbitConsumer {
     };
 
     channel.basicConsume(queueName, false, callback, consumerTag -> {});
-    System.out.println("Consumer bound to pollId = " + pollId);
+    System.out.println("Consumer bound to pollId = " + exchangeName);
   }
 }

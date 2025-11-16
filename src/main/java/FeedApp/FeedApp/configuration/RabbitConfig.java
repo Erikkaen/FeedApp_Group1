@@ -51,14 +51,13 @@ public class RabbitConfig {
   @Bean
   public Connection rabbitConnection() throws Exception {
     ConnectionFactory factory = new ConnectionFactory();
-    factory.setHost("localhost");  // Change if needed
+    factory.setHost("rabbitmq");  // Change if needed
     return factory.newConnection();
   }
 
   @Bean(name = "producerChannel")
   public Channel producerChannel(Connection connection) throws Exception {
     Channel channel = connection.createChannel();
-    channel.exchangeDeclare(EXCHANGE_NAME, "topic", true);
     return channel;
   }
 
