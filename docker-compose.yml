@@ -75,7 +75,7 @@ services:
 
   frontend:
     build:
-      context: ./frontend
+      context: ./FrontEnd
     container_name: my-frontend
     ports:
       - "8081:80"
