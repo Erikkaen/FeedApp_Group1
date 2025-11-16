@@ -9,6 +9,6 @@ public class RedisConfig {
 
     @Bean
     public UnifiedJedis jedisClient() {
-        return new UnifiedJedis("redis://localhost:6379");
+        return new UnifiedJedis("redis://redis:6379");
     }
 }

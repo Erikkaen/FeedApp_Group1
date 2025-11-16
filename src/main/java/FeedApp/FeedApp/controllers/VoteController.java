@@ -15,7 +15,7 @@ import FeedApp.FeedApp.dto.VoteRequest;
 import FeedApp.FeedApp.model.PollManager;
 import FeedApp.FeedApp.model.Vote;
 
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/votes")
 public class VoteController {
