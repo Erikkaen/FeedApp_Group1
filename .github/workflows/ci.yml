@@ -28,7 +28,7 @@ jobs:
         run: docker build -t my-feedapp ./
 
       - name: Build frontend image
-        run: docker build -t my-frontend ./frontend
+        run: docker build -t my-frontend ./FrontEnd
 
       # OPTIONAL: Run docker-compose to ensure everything works
       - name: Validate docker-compose build
