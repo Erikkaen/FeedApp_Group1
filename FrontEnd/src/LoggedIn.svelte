@@ -13,7 +13,7 @@
     }
 </script>
 
-<button class="backButton" on:click={home}>Go back</button>
+<button class="backButton" on:click={home}>Log out</button>
 
 <main>
     <h2>Welcome, {currentUser.username}!</h2>
