@@ -1,6 +1,6 @@
 package FeedApp.FeedApp.controllers;
 
-import FeedApp.FeedApp.repositories.UserRepo;
+import FeedApp.FeedApp.dto.UserRegistration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,13 +19,11 @@ import java.util.Optional;
 public class UserController {
 
     private final PollManager pollManager;
-    private final UserRepo userRepo;
     private final PasswordService passwordService;
 
     @Autowired
-  public UserController(PollManager pollManager, UserRepo userRepo, PasswordService passwordService) {
+  public UserController(PollManager pollManager, PasswordService passwordService) {
     this.pollManager = pollManager;
-    this.userRepo = userRepo;
     this.passwordService = passwordService;
   }
 
@@ -41,36 +39,28 @@ public class UserController {
         return user;
     }
 
-//  @GetMapping("/{username}")
-//  public User getUser(@PathVariable String userId) {
-//    return userRepo.findById(userId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-//  }
-
     // REGISTER USER
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody User user) {
+    public ResponseEntity<?> createUser(@RequestBody UserRegistration userRegistration) {
         //HASHING PASSWORD HERE
-        String encodedPassword = passwordService.encode(user.getPassword());
-        user.setPassword(encodedPassword);
+      String encodedPassword = passwordService.encode(userRegistration.getPassword());
 
-        pollManager.addUser(user.getUsername(), user);
-        return ResponseEntity.ok(user);
+      User user = new User(
+          userRegistration.getUsername(),
+          userRegistration.getEmail(),
+          encodedPassword
+      );
+
+        pollManager.addUser(user);
+      return ResponseEntity.status(HttpStatus.CREATED)
+          .body(user);
     }
 
-//  @PostMapping
-//  public void createUser(@RequestBody User user) {
-//     userRepo.save(user);
-//  }
 
   @PutMapping("/{username}")
     public void updateUser(@PathVariable String username, @RequestBody User user) {
-        pollManager.addUser(username, user);
+        pollManager.addUser(user);
     }
-
-//  @PutMapping("/{username}")
-//  public void updateUser(@PathVariable String username, @RequestBody User user) {
-//    userRepo.save(user);
-//  }
 
     @DeleteMapping("/{username}")
     public void deleteUser(@PathVariable String username) {
@@ -98,8 +88,4 @@ public class UserController {
         }
     }
 
-//  @DeleteMapping("/{username}")
-//  public void deleteUser(@PathVariable String username) {
-//    userRepo.deleteById(username);
-//  }
 }

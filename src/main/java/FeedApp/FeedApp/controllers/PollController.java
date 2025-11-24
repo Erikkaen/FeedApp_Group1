@@ -1,9 +1,7 @@
 package FeedApp.FeedApp.controllers;
 
-import java.util.Collection;
-import java.util.List;
+import java.time.Instant;
 import java.util.Optional;
-import java.util.UUID;
 
 import FeedApp.FeedApp.model.*;
 import FeedApp.FeedApp.repositories.PollsRepo;
@@ -46,17 +44,6 @@ public class PollController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Poll not found"));
     }
 
-    /*
-    @PostMapping("/{userId}")
-    public Poll createPoll(@PathVariable String userId, @RequestBody Poll poll) {
-        User user = pollManager.getUser(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-
-        poll.setCreatedBy(user);
-        pollManager.addPoll(poll);
-        return poll;
-    }*/
-
     @PostMapping("/{username}")
     public ResponseEntity<Poll> createPoll(@PathVariable String username, @RequestBody Poll poll)
  {
@@ -66,9 +53,12 @@ public class PollController {
         }
         User user = userOpt.get();
         poll.setCreatedBy(user);
+        poll.setPublishedAt(Instant.now());
 
-        for (VoteOption opt : poll.getOptions()) {
+        for (int i = 0; i < poll.getOptions().size(); i++) {
+            VoteOption opt = poll.getOptions().get(i);
             opt.setPoll(poll);
+            opt.setPresentationOrder(i);
         }
 
        try {

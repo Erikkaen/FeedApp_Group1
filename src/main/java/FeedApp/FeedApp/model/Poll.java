@@ -20,9 +20,8 @@ public class Poll {
 
     @Column(nullable = false)
     private String question;
-    
+
     private Instant publishedAt;
-//    private Instant validUntil;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -40,65 +39,20 @@ public class Poll {
         return this.id; 
     }
 
-
-  public String getQuestion() {
-        return this.question;
-    }
     public void setQuestion(String question) {
         this.question = question;
     }
 
-    public Instant getPublishedAt() {
-        return this.publishedAt;
-    }
-    public void setPublishedAt(Instant publishedAt) {
-        this.publishedAt = publishedAt;
-    }
-
-//    public Instant getValidUntil() {
-//        return this.validUntil;
-//    }
-//    public void setValidUntil(Instant validUntil) {
-//        this.validUntil = validUntil;
-//    }
-
     public List<VoteOption> getOptions() {
         return this.options;
-    }
-    public void setOptions(List<VoteOption> options) {
-        this.options = options;
-    }
-
-    public User getCreatedBy() {
-        return this.createdBy; 
     }
 
     public void setCreatedBy(User createdBy) {
         this.createdBy = createdBy;
     }
-
-
-    public Poll(String question) {
-      this.question = question;
-      this.publishedAt = Instant.now();
-      this.createdBy = createdBy;
+    public void setPublishedAt(Instant publishedAt) {
+      this.publishedAt = publishedAt;
     }
-
-    /**
-     *
-     * Adds a new option to this Poll and returns the respective
-     * VoteOption object with the given caption.
-     * The value of the presentationOrder field gets determined
-     * by the size of the currently existing VoteOptions for this Poll.
-     * I.e. the first added VoteOption has presentationOrder=0, the secondly
-     * registered VoteOption has presentationOrder=1 and so on.
-     */
-    public VoteOption addVoteOption(String caption) {
-        VoteOption option = new VoteOption();
-        option.setCaption(caption);
-        option.setPresentationOrder(this.options.size());
-        option.setPoll(this);
-        this.options.add(option);
-        return option;
-    }
+    public String getQuestion() { return question; }
+    public void setOptions(List<VoteOption> options) { this.options = options; }
 }

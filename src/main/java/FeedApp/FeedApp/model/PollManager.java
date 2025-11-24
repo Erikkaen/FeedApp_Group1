@@ -5,42 +5,28 @@ import java.util.*;
 import FeedApp.FeedApp.messaging.Producer;
 import FeedApp.FeedApp.repositories.PollsRepo;
 import FeedApp.FeedApp.repositories.UserRepo;
-import FeedApp.FeedApp.repositories.VoteOptionRepo;
 import FeedApp.FeedApp.repositories.VoteRepo;
 import FeedApp.FeedApp.messaging.RabbitConsumer;
-import FeedApp.FeedApp.services.ConsumerService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
-import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 import redis.clients.jedis.UnifiedJedis;
 
+import javax.management.relation.Role;
+
 @Component
 public class PollManager {
-//    private final Map<String, User> users = new HashMap<>();
-//    private final Map<String, Poll> polls = new HashMap<>();
-//    private final Map<String, Vote> votes = new HashMap<>();
   private final UserRepo userRepo;
   private final VoteRepo voteRepo;
-  private final VoteOptionRepo voteOptionRepo;
   private final PollsRepo pollRepo;
   private final UnifiedJedis jedis;
-  private final ObjectMapper objectMapper = new ObjectMapper();
-  private Producer producer;
-  private RabbitConsumer rabbitConsumer;
-  @Autowired
-  private org.springframework.amqp.rabbit.connection.ConnectionFactory connectionFactory;
+  private final Producer producer;
+  private final RabbitConsumer rabbitConsumer;
 
-  @Autowired
-  private ConsumerService consumerService;
-
-  public PollManager(UserRepo userRepo, VoteRepo voteRepo, VoteOptionRepo voteOptionRepo, PollsRepo pollRepo, UnifiedJedis jedis, Producer producer,  RabbitConsumer rabbitConsumer) {
+  public PollManager(UserRepo userRepo, VoteRepo voteRepo, PollsRepo pollRepo, UnifiedJedis jedis, Producer producer,  RabbitConsumer rabbitConsumer) {
     this.userRepo = userRepo;
     this.voteRepo = voteRepo;
-    this.voteOptionRepo = voteOptionRepo;
     this.producer = producer;
     this.pollRepo = pollRepo;
     this.jedis = jedis;
@@ -52,7 +38,7 @@ public class PollManager {
   }
 
     // user methods
-    public void addUser(String username, User user) {
+    public void addUser(User user) {
         userRepo.save(user);
     }
 
@@ -66,6 +52,21 @@ public class PollManager {
     public boolean removeUser(String username) {
       userRepo.deleteById(username);
       return true;
+    }
+
+    public User getOrCreateGuest(String guestId) {
+      Optional<User> guestOpt = userRepo.findByUsername(guestId);
+      if (guestOpt.isPresent()) {
+        return guestOpt.get();
+      }
+
+      User guest = new User();
+      guest.setUsername(guestId);
+      guest.setEmail(guestId + "@guest.local"); // dummy email
+      guest.setPassword(""); // no password
+      guest.setRole(User.Roles.GUEST);
+
+      return userRepo.save(guest);
     }
 
     // poll methods
@@ -95,7 +96,7 @@ public class PollManager {
 
   @PostConstruct
   public void createOnInit() throws Exception {
-    List<Poll> polls = (List<Poll>) pollRepo.findAll(); // get all existing polls
+    List<Poll> polls = (List<Poll>) pollRepo.findAll();
     for (Poll poll : polls) {
       initTopic(poll.getId());
     }
@@ -104,51 +105,11 @@ public class PollManager {
 
 
     // vote methods
-//    public void addVote(String pollId, Vote vote, String userIdOrGuestId, String optionId) {
-//        VoteOption option = voteOptionRepo.findById(optionId)
-//                .orElseThrow(() -> new RuntimeException("Vote option not found"));
-//
-//        // Check if poll exists
-//        Poll poll = pollRepo.findById(pollId)
-//                .orElseThrow(() -> new RuntimeException("Poll not found"));
-//
-//        // Check user or guest
-//        Optional<User> userOpt = userRepo.findById(userIdOrGuestId);
-//        boolean alreadyVoted;
-//
-//        if (userOpt.isPresent()) {
-//            alreadyVoted = voteRepo.existsByUser_IdAndOption_Poll_Id(userOpt.get().getId(), pollId);
-//            if (alreadyVoted) {
-//                throw new ResponseStatusException(HttpStatus.CONFLICT, "User already voted");
-//            }
-//            vote.setUser(userOpt.get());
-//        } else {
-//            // Treat ID as guest id
-//            alreadyVoted = voteRepo.existsByGuestIdAndOption_Poll_Id(userIdOrGuestId, pollId);
-//            if (alreadyVoted) {
-//                throw new ResponseStatusException(HttpStatus.CONFLICT, "Guest already voted");
-//            }
-//            vote.setGuestId(userIdOrGuestId);
-//        }
-//
-//        vote.setVotesOn(option);
-//        option.setVoteCount(option.getVoteCount() + 1);
-//
-//        voteRepo.save(vote);
-//        voteOptionRepo.save(option);
-//    }
-
   public void voteProduce(String pollId, String optionId, String userIdOrGuestId) {
     String message = "{ \"optionId\": \"" + optionId + "\" , \"userIdOrGuestId\": \"" + userIdOrGuestId + "\"  }";
     producer.Produce(message, pollId);
 
   }
-
-
-    //TODO: change this method to use the database
-//    public void updateVote(String pollId, Vote vote, String username) {
-//        this.votes.put(pollId + "-" + username, vote);
-//    }
 
     public Vote getVote(String pollId, String userId) {
         return voteRepo.findById(pollId + "-" + userId).orElse(null);
@@ -160,13 +121,6 @@ public class PollManager {
         voteRepo.deleteById(pollId + "-" + username);
         return true;
     }
-
-    public Collection<Vote> getVotes(String pollId) {
-      Poll poll = pollRepo.findById(pollId)
-          .orElseThrow(() -> new RuntimeException("Poll not found"));
-
-      return voteRepo.findAllByOption_Poll_Id(pollId);
-  }
 
   public int getVoteCount(String pollId, String optionId) {
       String redisKey = "poll:" + pollId + ":results";

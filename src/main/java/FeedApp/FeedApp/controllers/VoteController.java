@@ -32,18 +32,6 @@ public class VoteController {
       pollManager.voteProduce(pollId, voteRequest.optionId, username);
     }
 
-//    @PutMapping("/{pollId}/{username}")
-//    public void updateVote(@PathVariable String pollId, @PathVariable String username,
-//                           @RequestBody Vote vote) {
-//
-//        pollManager.updateVote(pollId, vote, username);
-//    }
-//
-//    @GetMapping
-//    public Collection<Vote> getAllVotes() {
-//        return pollManager.getVotes().values();
-//    }
-
     @GetMapping("/{pollId}/option/{optionId}")
     public int getVoteCount(@PathVariable String pollId,
                             @PathVariable String optionId) {

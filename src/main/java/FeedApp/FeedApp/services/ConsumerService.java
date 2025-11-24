@@ -33,13 +33,12 @@ public class ConsumerService {
   public void votePersist(String message) throws JsonProcessingException {
     ObjectMapper objectMapper = new ObjectMapper();
     VoteRequest voteDetails = objectMapper.readValue(message, VoteRequest.class);
-    String userIdOrGuestId = voteDetails.userIdOrGuestId;
+    String usernameOrGuestId = voteDetails.userIdOrGuestId;
 
-    // Log the incoming vote details
+    // Log incoming vote
     System.out.println("Incoming vote message: " + message);
-    System.out.println("Looking for VoteOption ID: '" + voteDetails.optionId + "' (length=" + voteDetails.optionId.length() + ")");
 
-    // Trim whitespace just in case
+    // Find the vote option
     String optionId = voteDetails.optionId.trim();
     VoteOption option = voteOptionRepo.findById(optionId)
         .orElseThrow(() -> new RuntimeException("VoteOption not found"));
@@ -48,38 +47,35 @@ public class ConsumerService {
     String pollId = poll.getId();
     System.out.println("Found VoteOption for poll ID: " + pollId);
 
-    Optional<User> userOpt = userRepo.findByUsername(userIdOrGuestId);
-    String userId = null;
-    if (userOpt.isPresent()) {
-      userId = userOpt.get().getId();
+    // Lookup or create a user (guest or registered)
+    User user = userRepo.findByUsername(usernameOrGuestId)
+        .orElseGet(() -> {
+          // Create a new guest user
+          User g = new User(usernameOrGuestId, usernameOrGuestId + "@guest.com", "");
+          g.setRole(User.Roles.GUEST);
+          userRepo.save(g);
+          return g;
+        });
+
+    // Check if this user already voted in this poll
+    boolean alreadyVoted = voteRepo.existsByUser_IdAndOption_Poll_Id(user.getId(), pollId);
+    if (alreadyVoted) {
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "User already voted");
     }
 
-    boolean alreadyVoted;
+    // Persist vote
     Vote vote = new Vote();
-
-    if (userId != null) {
-      // Registered user
-      alreadyVoted = voteRepo.existsByUser_IdAndOption_Poll_Id(userId, pollId);
-      if (alreadyVoted) {
-        throw new ResponseStatusException(HttpStatus.CONFLICT, "User already voted");
-      }
-      vote.setUser(userOpt.get());
-    } else {
-      // Treat as guest
-      alreadyVoted = voteRepo.existsByGuestIdAndOption_Poll_Id(userIdOrGuestId, pollId);
-      if (alreadyVoted) {
-        throw new ResponseStatusException(HttpStatus.CONFLICT, "Guest already voted");
-      }
-      vote.setGuestId(userIdOrGuestId);
-    }
-
-
+    vote.setUser(user);
     vote.setVotesOn(option);
-    option.setVoteCount(option.getVoteCount() + 1);
     vote.setPublishedAt(Instant.now());
+
+    // Increment vote count
+    option.setVoteCount(option.getVoteCount() + 1);
+
     voteRepo.save(vote);
     voteOptionRepo.save(option);
-    System.out.println("Vote persisted successfully!");
+
+    System.out.println("Vote persisted successfully for user: " + user.getUsername());
   }
 
 

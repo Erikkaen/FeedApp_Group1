@@ -22,22 +22,14 @@ public class Vote {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column
-    private String guestId;
-
     public Vote() {}
 
     public String getId() {return this.id;}
 
-    public Instant getPublishedAt() {return this.publishedAt;}
     public void setPublishedAt(Instant publishedAt) {this.publishedAt = publishedAt;}
 
-    public VoteOption getVotesOn() {return this.option;}
     public void setVotesOn(VoteOption votesOn) {this.option = votesOn;}
 
     public User getUser() { return user; }
     public void setUser(User user) { this.user = user; }
-
-    public String getGuestId() { return guestId; }
-    public void setGuestId(String guestId) { this.guestId = guestId; }
 }

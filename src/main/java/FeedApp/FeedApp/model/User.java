@@ -1,15 +1,26 @@
 package FeedApp.FeedApp.model;
 
 import java.time.Instant;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements UserDetails {
+
+  public enum Roles implements GrantedAuthority {
+    GUEST,
+    PRIVILEGED;
+
+    @Override
+    public String getAuthority() {
+      return name();
+    }
+  }
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -23,6 +34,10 @@ public class User {
 
     @Column(nullable = false)
     private String password;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Roles role;
 
     @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference
@@ -39,57 +54,36 @@ public class User {
         this.email = email;
         this.password = password;
         this.created = new LinkedHashSet<>();
+        this.role = Roles.PRIVILEGED;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+      return Arrays.asList(this.role);
     }
 
     public String getId() {
         return this.id; 
     }
 
-    public String getUsername() {
+  public String getUsername() {
         return this.username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getEmail() {
-        return this.email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getPassword() { return password; }
 
     public void setPassword(String password) { this.password = password; }
-
-    public Set<Poll> getCreated() {
-        return this.created;
+    public Roles getRole() {
+      return role;
     }
 
-    /**
-     * Creates a new Poll object for this user
-     * with the given poll question
-     * and returns it.
-     */
-    public Poll createPoll(String question) {
-        Poll poll = new Poll();
-        poll.setQuestion(question);
-        poll.setCreatedBy(this);
-        this.created.add(poll);
-        return poll;
+    public void setRole(Roles role) {
+      this.role = role;
     }
-
-    /**
-     * Creates a new Vote for a given VoteOption in a Poll
-     * and returns the Vote as an object.
-     */
-    public Vote voteFor(VoteOption option) {
-        Vote vote = new Vote();
-        vote.setVotesOn(option);
-        vote.setPublishedAt(Instant.now());
-        return vote;
+    public void setUsername(String username) {
+      this.username = username;
+    }
+    public void setEmail(String email) {
+      this.email = email;
     }
 }

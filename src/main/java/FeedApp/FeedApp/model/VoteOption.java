@@ -11,10 +11,10 @@ public class VoteOption {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Column(nullable = false)
+  @Column(nullable = false)
     private String caption;
 
-    @Column(nullable = false)
+  @Column(nullable = false)
     private int presentationOrder;
 
     @Column(nullable = false)
@@ -40,22 +40,6 @@ public class VoteOption {
         this.voteCount = voteCount;
     }
 
-    public String getCaption() {
-        return this.caption;
-    }
-
-    public void setCaption(String caption) {
-        this.caption = caption;
-    }
-
-    public int getPresentationOrder() {
-        return this.presentationOrder;
-    }
-
-    public void setPresentationOrder(int presentationOrder) {
-        this.presentationOrder = presentationOrder;
-    }
-
     public Poll getPoll() {
         return poll;
     }
@@ -63,4 +47,14 @@ public class VoteOption {
     public void setPoll(Poll poll) {
         this.poll = poll;
     }
+    public String getCaption() {
+      return caption;
+    }
+    public void setPresentationOrder(int presentationOrder) {
+      this.presentationOrder = presentationOrder;
+    }
+    public int getPresentationOrder() {
+      return presentationOrder;
+    }
+
 }
