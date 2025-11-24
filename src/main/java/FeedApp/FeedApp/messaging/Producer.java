@@ -1,7 +1,6 @@
 package FeedApp.FeedApp.messaging;
 
 import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.BasicProperties;
 import com.rabbitmq.client.Channel;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -11,7 +10,6 @@ import java.io.IOException;
 @Component
 public class Producer {
 
-  private static final String EXCHANGE_NAME = "pollTopic";
   private final Channel producerChannel;
 
   public Producer(@Qualifier("producerChannel") Channel producerChannel) {

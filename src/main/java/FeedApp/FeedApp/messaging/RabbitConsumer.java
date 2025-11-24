@@ -9,7 +9,6 @@ public class RabbitConsumer {
 
   private final Connection connection;
   private final ConsumerService consumerService;
-  private static final String EXCHANGE_NAME = "pollTopic";
 
   public RabbitConsumer(Connection connection, ConsumerService consumerService) {
     this.connection = connection;

@@ -78,7 +78,7 @@ public class UserBenchmarkTest {
           "user" + uniqueSuffix + "@example.com",
           "password123"
       );
-      pollManager.addUser(user.getUsername(), user);
+      pollManager.addUser(user);
     }
 
     long end = System.currentTimeMillis();
