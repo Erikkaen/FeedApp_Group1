@@ -9,6 +9,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -25,6 +27,8 @@ public class UserController {
 
     private final PollManager pollManager;
     private final PasswordService passwordService;
+    @Autowired
+    private UserDetailsService userDetailsService;
 
     @Autowired
   public UserController(PollManager pollManager, PasswordService passwordService) {
@@ -46,7 +50,7 @@ public class UserController {
 
     // REGISTER USER
     @PostMapping
-    public ResponseEntity<?> createUser(@RequestBody UserRegistration userRegistration) {
+    public ResponseEntity<?> createUser(@RequestBody UserRegistration userRegistration, HttpServletRequest request) {
         //HASHING PASSWORD HERE
       String encodedPassword = passwordService.encode(userRegistration.getPassword());
 
@@ -56,7 +60,16 @@ public class UserController {
           encodedPassword
       );
 
-        pollManager.addUser(user);
+      pollManager.addUser(user);
+
+      UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
+      Authentication auth = new UsernamePasswordAuthenticationToken(
+          userDetails, null, userDetails.getAuthorities()
+      );
+
+      SecurityContextHolder.getContext().setAuthentication(auth);
+      request.getSession(true).setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
+
       return ResponseEntity.status(HttpStatus.CREATED)
           .body(user);
     }
