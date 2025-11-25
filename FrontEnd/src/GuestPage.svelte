@@ -25,9 +25,6 @@
             <button class="homeButton" on:click={register}>Register account</button>
         </div>
         <div>
-            <CreatePollComponent {currentUser} on:pollCreated={() => (pollRefresh = Date.now())} />
-        </div>
-        <div>
             <button class="backButton" on:click={home}>Go back</button>
             <h2>Welcome, Guest</h2>
             <VoteComponent {currentUser} {pollRefresh} />
