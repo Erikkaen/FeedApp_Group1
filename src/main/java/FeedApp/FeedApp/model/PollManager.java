@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 import redis.clients.jedis.UnifiedJedis;
 
-import javax.management.relation.Role;
 
 @Component
 public class PollManager {
