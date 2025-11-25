@@ -22,10 +22,11 @@
       };
 
       try {
-          const res = await fetch(`http://localhost:8080/polls/${currentUser.username}`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(pollData),
+          const res = await fetch(`http://localhost:8080/polls`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(pollData),
+            credentials: "include"
           });
 
           if (!res.ok) {

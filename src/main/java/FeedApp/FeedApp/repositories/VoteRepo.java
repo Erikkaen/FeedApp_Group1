@@ -6,6 +6,4 @@ import java.util.Collection;
 
 public interface VoteRepo extends CrudRepository<Vote, String> {
   boolean existsByUser_IdAndOption_Poll_Id(String userId, String pollId);
-  boolean existsByGuestIdAndOption_Poll_Id(String guestId, String pollId);
-
 }

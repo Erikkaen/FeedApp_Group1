@@ -10,16 +10,16 @@
         try {
             const response = await fetch("http://localhost:8080/users/login", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, password, email }),
+                headers: { "Content-Type": "application/json"  },
+                body: JSON.stringify({ username, password }),
+                credentials: 'include',
             });
 
             if (response.ok) {
-                const userData = await response.json();
-                dispatch("userCreated", userData);
+                dispatch("userCreated", {username});
+
             } else {
-                const errText = await response.text();
-                alert("Login failed: " + errText);
+                alert("Login failed");
             }
         } catch (error) {
             console.error("Login error:", error);

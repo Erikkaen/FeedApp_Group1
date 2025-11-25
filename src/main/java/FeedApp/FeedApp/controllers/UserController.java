@@ -1,9 +1,14 @@
 package FeedApp.FeedApp.controllers;
 
 import FeedApp.FeedApp.dto.UserRegistration;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -11,9 +16,9 @@ import FeedApp.FeedApp.services.PasswordService;
 import FeedApp.FeedApp.model.PollManager;
 import FeedApp.FeedApp.model.User;
 
+import java.util.Map;
 import java.util.Optional;
 
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -33,8 +38,8 @@ public class UserController {
     }
 
     @GetMapping("/{username}")
-    public Optional<User> getUser(@PathVariable String userId) {
-        Optional<User> user = pollManager.getUser(userId);
+    public Optional<User> getUser(@PathVariable String username) {
+        Optional<User> user = pollManager.getUser(username);
         if (user.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         return user;
     }
@@ -68,24 +73,43 @@ public class UserController {
         if (!removed) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
     }
 
-    // LOGIN USER
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody User loginRequest) {
-        Optional<User> userOpt = pollManager.getUserByUsername(loginRequest.getUsername());
-        if (userOpt.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
-        }
-        User user = userOpt.get();
-        boolean passwordMatches = passwordService.matches(
-                loginRequest.getPassword(),
-                user.getPassword()
-        );
+  @Autowired
+  private AuthenticationManager authenticationManager;
 
-        if (passwordMatches) {
-            return ResponseEntity.ok(user);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
-        }
+  @PostMapping("/login")
+  public ResponseEntity<?> login(
+      @RequestBody Map<String, String> body,
+      HttpServletRequest request
+  ) {
+    String username = body.get("username");
+    String password = body.get("password");
+    Authentication auth = authenticationManager.authenticate(
+        new UsernamePasswordAuthenticationToken(username, password)
+    );
+
+    SecurityContextHolder.getContext().setAuthentication(auth);
+
+    request.getSession(true).setAttribute(
+        "SPRING_SECURITY_CONTEXT",
+        SecurityContextHolder.getContext()
+    );
+
+    return ResponseEntity.ok(Map.of("username", username));
+  }
+
+  @PostMapping("/logout")
+  public ResponseEntity<?> logout(HttpServletRequest request) {
+    try {
+      // invalidate session
+      var session = request.getSession(false);
+      if (session != null) {
+        session.invalidate();
+      }
+      // clear security context
+      SecurityContextHolder.clearContext();
+      return ResponseEntity.ok(Map.of("loggedOut", true));
+    } catch (Exception e) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", e.getMessage()));
     }
-
+  }
 }

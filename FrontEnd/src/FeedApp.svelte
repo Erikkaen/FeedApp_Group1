@@ -33,6 +33,11 @@
     currentPage = "home";
   }
 
+  function handleLoggedOut() {
+    currentUser = null;   // clear logged-in user
+    currentPage = "home"; // return to home page
+  }
+
   /* function handlePollCreated() {
     pollRefresh += 1;
   } */
@@ -51,6 +56,7 @@
 
   {:else if currentPage === "loggedIn"}
     <LoggedIn {currentUser}
+      on:loggedOut={handleLoggedOut}
       on:homePage={goToHome}/>
 
   {:else if currentPage === "loginForm"}
@@ -61,6 +67,7 @@
   {:else if currentPage === "registerForm"}
     <CreateUserComponent
       on:userCreated={(e) => handleUserCreated(e.detail)}
+      on:loggedOut={handleLoggedOut}
       on:homePage={goToHome}
     />
   {:else if currentPage === "anonymous"}
