@@ -29,8 +29,8 @@ dependencies {
     implementation("redis.clients:jedis:6.2.0")
 
     // H2 database
-//	runtimeOnly("com.h2database:h2")
-//	implementation("com.h2database:h2:2.3.232")
+	runtimeOnly("com.h2database:h2")
+	implementation("com.h2database:h2:2.3.232")
 
     // Postgres database
     implementation("org.postgresql:postgresql:42.7.7")
