@@ -8,6 +8,6 @@ The goal of the project is to develop a running prototype of a full-stack FeedAp
 - Build and start the Docker containers:
     - `docker compose up`
 - Or, if you want to build the images from code:
-        - `docker compose up --build`
+  - `docker compose up --build`
 - Open [http://localhost:8081](http://localhost:8081) to interact with FeedApp
 
