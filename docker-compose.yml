@@ -51,6 +51,7 @@ services:
       start_period: 10s
 
   my-feedapp:
+    image: aikjolst/feedapp-backend
     build: .
     container_name: my-feedapp
     ports:
@@ -74,6 +75,7 @@ services:
         condition: service_healthy
 
   frontend:
+    image: aikjolst/feedapp-frontend
     build:
       context: ./FrontEnd
     container_name: my-frontend
